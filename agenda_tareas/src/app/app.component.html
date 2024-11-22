@@ -1,0 +1,28 @@
+<div *ngIf="!isStudentLoggedIn && !isAdminLoggedIn">
+  <mat-toolbar color="primary" class="navbar">
+    <span class="navbar-brand">Agenda de Tareas</span>
+    <span class="spacer"></span>
+    <button mat-button routerLink="/signup" routerLinkActive="active">Register</button>
+    <button mat-button routerLink="/login" routerLinkActive="active">Login</button>
+  </mat-toolbar>
+</div>
+
+<div *ngIf="isAdminLoggedIn">
+  <mat-toolbar color="primary" class="navbar">
+    <span class="navbar-brand">Admin</span>
+    <span class="spacer"></span>
+    <button mat-button routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</button>
+    <button mat-button routerLink="/admin/task" routerLinkActive="active">Post Task</button>
+    <button mat-button (click)="logout()" routerLinkActive="active">Logout</button>
+  </mat-toolbar>
+</div>
+
+<div *ngIf="isStudentLoggedIn">
+  <mat-toolbar color="primary" class="navbar">
+    <span class="navbar-brand">Estudiante</span>
+    <span class="spacer"></span>
+    <button mat-button routerLink="/student/dashboard" routerLinkActive="active">Dashboard</button>
+    <button mat-button (click)="logout()" routerLinkActive="active">Logout</button>
+  </mat-toolbar>
+</div>
+<router-outlet></router-outlet>

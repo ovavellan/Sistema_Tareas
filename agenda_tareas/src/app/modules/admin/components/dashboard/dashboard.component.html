@@ -1,0 +1,41 @@
+<div class="task-list">
+  <mat-card class="task-card" *ngFor="let task of listofTasks">
+    <div class="task-details">
+      <h2 class="task-name">{{ task.title }}</h2>
+      <p class="task-description">{{ task.description }}</p>
+
+      <mat-divider></mat-divider>
+      <div class="task-info">
+        <div class="info-row">
+          <span class="info-label">Fecha de Vencimiento:</span>
+          <span class="info-value">{{ task.dueDate | date: 'd, MMMM y' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Estudiante:</span>
+          <span class="info-value">{{ task.studentName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Prioridad:</span>
+          <span class="info-value">{{ task.priority }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Estatus:</span>
+          <span class="info-value">{{ task.taskStatus }}</span>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+      <div class="actions">
+<!--        <button mat-icon-button color="accent" class="view-button" routerLink="/admin/task-details/{{task.id}}">-->
+<!--          <mat-icon>visibility</mat-icon>-->
+<!--        </button>-->
+<!--        <a mat-icon-button color="primary" class="update-button" [routerLink]="'/admin/task/' + task.id + '/edit'">-->
+<!--          <mat-icon>edit</mat-icon>-->
+<!--        </a>-->
+        <button mat-icon-button color="warn" class="delete-button" (click)="deleteTask(task.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-card>
+</div>

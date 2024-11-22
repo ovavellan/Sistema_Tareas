@@ -1,0 +1,100 @@
+.task-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background-color: #f8f8f8;
+  min-height: 37vh;
+  padding: 20px;
+
+  .task-card {
+    width: calc(33.33% - 20px);
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .task-details {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .task-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #108ee9;
+        margin: 0;
+        word-wrap: break-word;
+      }
+
+      .task-description {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.5;
+        margin: 10px 0;
+        word-wrap: break-word;
+      }
+
+      .task-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .info-row {
+          flex: 0 0 48%;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+
+          .info-label {
+            font-weight: 500;
+            color: #666;
+          }
+
+          .info-value {
+            font-weight: bold;
+            color: #333;
+          }
+        }
+      }
+
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+
+        .update-button,
+        .view-button,
+        .delete-button {
+          border: none;
+          background: none;
+          cursor: pointer;
+
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .task-card {
+      width: calc(50% - 20px);
+    }
+  }
+
+  @media (max-width: 576px) {
+    .task-card {
+      width: 100%;
+      margin: 10px 0;
+    }
+  }
+}
