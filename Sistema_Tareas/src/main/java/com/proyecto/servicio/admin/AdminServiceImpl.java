@@ -62,4 +62,35 @@ public class AdminServiceImpl implements AdminService{
     public void deleteTask(Long id) {
         taskRespository.deleteById(id);
     }
+
+    @Override
+    public TaskDTO getTaskById(Long id) {
+        Optional<Task> optionalTask = taskRespository.findById(id);
+        return optionalTask.map(Task::getTaskDTO).orElse(null);
+    }
+
+    @Override
+    public TaskDTO updateTask(Long id, TaskDTO taskDTO) {
+        Optional<Task> optionalTask = taskRespository.findById(id);
+        if (optionalTask.isPresent()) {
+            Task existingTask = optionalTask.get();
+            existingTask.setTitle(taskDTO.getTitle());
+            existingTask.setDescription(taskDTO.getDescription());
+            existingTask.setDueDate(taskDTO.getDueDate());
+            existingTask.setPriority(taskDTO.getPriority());
+            existingTask.setTaskStatus(mapStringToTaskStatus(String.valueOf(taskDTO.getTaskStatus())));
+            return taskRespository.save(existingTask).getTaskDTO();
+        }
+        return null;
+    }
+
+    private TaskStatus mapStringToTaskStatus(String status) {
+        return switch (status) {
+            case "PENDIENTE" -> TaskStatus.PENDIENTE;
+            case "ENPROGRESO" -> TaskStatus.ENPROGRESO;
+            case "COMPLETADA" -> TaskStatus.COMPLETADA;
+            case "APLAZADA" -> TaskStatus.APLAZADA;
+            default -> TaskStatus.CANCELADA;
+        };
+    }
 }

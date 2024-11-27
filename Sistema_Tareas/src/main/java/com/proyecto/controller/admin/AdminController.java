@@ -36,4 +36,16 @@ public class AdminController {
         adminService.deleteTask(id);
         return ResponseEntity.ok(null);
     }
+
+    @GetMapping("/task/{id}")
+    public ResponseEntity<TaskDTO> getTask(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.getTaskById(id));
+    }
+
+    @PutMapping("/task/{id}")
+    public ResponseEntity<?> updateTask(@PathVariable Long id, @RequestBody TaskDTO taskDTO) {
+        TaskDTO updateTask = adminService.updateTask(id, taskDTO);
+        if (updateTask == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updateTask);
+    }
 }
