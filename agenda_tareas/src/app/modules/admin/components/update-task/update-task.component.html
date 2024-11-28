@@ -1,1 +1,52 @@
-<p>update-task works!</p>
+<div class="container">
+  <h2>Update Task</h2>
+
+  <form [formGroup]="updateTaskForm">
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Título</mat-label>
+      <input matInput type="text" placeholder="Title" formControlName="title">
+      <mat-error *ngIf="updateTaskForm.get('title')?.hasError('required')">This Input Is
+        Required!</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput placeholder="Description" formControlName="description"></textarea>
+      <mat-error *ngIf="updateTaskForm.get('description')?.hasError('required')">This Input Is
+        Required!</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Due Date</mat-label>
+      <input matInput [matDatepicker]="dueDatePicker" placeholder="Choose a due date" formControlName="dueDate">
+      <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #dueDatePicker></mat-datepicker>
+      <mat-error *ngIf="updateTaskForm.get('dueDate')?.hasError('required')">This Input is Required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Seleccione la Prioridad</mat-label>
+      <mat-select formControlName="priority" name="Priority">
+        <mat-option *ngFor="let priority of listOfPriorities" [value]="priority">
+          {{priority}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="updateTaskForm.get('priority')?.hasError('required')">This Input Is
+        Required!</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form.field">
+      <mat-label>Seleccione el Estudiante</mat-label>
+      <mat-select formControlName="studentId" name="studentId">
+        <mat-option *ngFor="let student of listOfEstudents" [value]="student.id">
+          {{student.name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="updateTaskForm.get('studentId')?.hasError('required')">This Input Is
+        Required</mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="updateTaskForm.invalid" (click)="updateTask()">Update Task</button>
+  </form>
+</div>
