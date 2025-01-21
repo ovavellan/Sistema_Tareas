@@ -9,6 +9,8 @@ import { SignupComponent } from './auth/components/signup/signup.component';
 import {DemoAngularMaterailModule} from "./DemoAngularMaterialModule";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
+import { MatMenuModule } from '@angular/material/menu';
+
 
 @NgModule({
   declarations: [
@@ -23,7 +25,8 @@ import {HttpClientModule} from "@angular/common/http";
     DemoAngularMaterailModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]

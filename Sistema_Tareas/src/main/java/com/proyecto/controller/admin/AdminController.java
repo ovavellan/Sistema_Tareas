@@ -1,11 +1,14 @@
 package com.proyecto.controller.admin;
 
+import com.proyecto.dto.CommentDTO;
 import com.proyecto.dto.TaskDTO;
 import com.proyecto.servicio.admin.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,4 +51,22 @@ public class AdminController {
         if (updateTask == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(updateTask);
     }
+
+    @GetMapping("/tasks/search/{title}")
+    public ResponseEntity<List<TaskDTO>> searchTask(@PathVariable String title){
+        return ResponseEntity.ok(adminService.searchTaskByTitle(title));
+    }
+
+    @PostMapping("/task/comment/{taskId}")
+    public ResponseEntity<CommentDTO> createComment(@PathVariable Long taskId, @RequestParam String content) {
+        CommentDTO createdCommentDTO = adminService.createComment(taskId, content);
+        if (createdCommentDTO == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCommentDTO);
+    }
+
+    @GetMapping("/comments/{taskId}")
+    public ResponseEntity<List<CommentDTO>> getCommentsByTaskId(@PathVariable Long taskId) {
+        return ResponseEntity.ok(adminService.getCommentsByTaskId(taskId));
+    }
+
 }

@@ -2,13 +2,14 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  background-color: #f8f8f8;
+  // background-color: #f8f8f8;
   min-height: 37vh;
-  padding: 20px;
+  // padding: 20px;
 
   .task-card {
-    width: calc(33.33% - 20px);
+    // width: calc(33.33% - 20px);
     margin-bottom: 20px;
+    width: 100%;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 
@@ -33,13 +34,13 @@
         margin-top: 10px;
 
         .info-row {
-          flex: 0 0 48%;
+          flex: 0 0 50%;
           display: flex;
-          flex-direction: column;
-          gap: 5px;
+          align-items: center;
+          margin-bottom: 8px;
 
           .info-label {
-            font-weight: 100;
+            font-weight: 10px;
             margin-right: 5px;
           }
 
@@ -64,4 +65,43 @@
       }
     }
   }
+}
+
+
+.card-container {
+  margin: 16px;
+  // padding: 30px;
+  max-width: 60%;
+  padding-bottom: 30px;
+}
+
+mat-card {
+  padding: 10px;
+}
+
+.example-header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
+mat-card-content {
+  margin-top: 10px;
+}
+
+mat-card-footer {
+  margin-left: 20px;
+}
+
+.img {
+
+  object-fit: cover;
+
+}
+
+.comment-card {
+  margin-top: 20px;
+}
+
+mat-form-field {
+  width: 100%;
 }

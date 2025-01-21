@@ -1,3 +1,19 @@
+.search-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+
+  .search-input {
+    width: 300px;
+    margin-right: 15px;
+
+    input {
+      padding-right: 40px;
+    }
+  }
+}
+
 .task-list {
   display: flex;
   flex-wrap: wrap;
@@ -70,8 +86,12 @@
         justify-content: flex-end;
         gap: 10px;
 
+        .view-button {
+          margin-right: 10px;
+        }
+
         .update-button,
-        .view-button,
+
         .delete-button {
           border: none;
           background: none;

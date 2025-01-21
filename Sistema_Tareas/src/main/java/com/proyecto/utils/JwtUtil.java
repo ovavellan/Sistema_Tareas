@@ -1,22 +1,27 @@
 package com.proyecto.utils;
 
+import com.proyecto.entities.Usuario;
+import com.proyecto.repositorio.UsuarioRepositorio;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
+
+    private final UsuarioRepositorio usuarioRepositorio;
 
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
@@ -59,5 +64,25 @@ public class JwtUtil {
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token)
                 .getBody();
+    }
+
+    public Usuario getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Authentication: " + authentication); // Debug
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            System.out.println("Principal class: " + authentication.getPrincipal().getClass()); // Debug
+            System.out.println("Principal: " + authentication.getPrincipal()); // Debug
+
+            if (authentication.getPrincipal() instanceof UserDetails userDetails) {
+                String email = userDetails.getUsername();
+                System.out.println("Email extraído: " + email); // Debug
+
+                Usuario usuario = usuarioRepositorio.findFirstByEmail(email).orElse(null);
+                System.out.println("Usuario encontrado: " + usuario); // Debug
+                return usuario;
+            }
+        }
+        return null;
     }
 }

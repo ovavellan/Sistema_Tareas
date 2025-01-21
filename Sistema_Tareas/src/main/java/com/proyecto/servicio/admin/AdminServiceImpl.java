@@ -1,17 +1,24 @@
 package com.proyecto.servicio.admin;
 
+import com.proyecto.dto.CommentDTO;
 import com.proyecto.dto.TaskDTO;
 import com.proyecto.dto.UserDto;
+import com.proyecto.entities.Comment;
 import com.proyecto.entities.Task;
 import com.proyecto.enums.TaskStatus;
 import com.proyecto.enums.UserRole;
 import com.proyecto.entities.Usuario;
+import com.proyecto.repositorio.CommentRepository;
 import com.proyecto.repositorio.TaskRespository;
 import com.proyecto.repositorio.UsuarioRepositorio;
+import com.proyecto.utils.JwtUtil;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +30,10 @@ public class AdminServiceImpl implements AdminService{
     private final UsuarioRepositorio usuarioRepositorio;
 
     private final TaskRespository taskRespository;
+
+    private final JwtUtil jwtUtil;
+
+    private final CommentRepository commentRepository;
 
     @Override
     public List<UserDto> getUsers() {
@@ -72,16 +83,62 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public TaskDTO updateTask(Long id, TaskDTO taskDTO) {
         Optional<Task> optionalTask = taskRespository.findById(id);
-        if (optionalTask.isPresent()) {
+        Optional<Usuario> optionalUser = usuarioRepositorio.findById(taskDTO.getStudentId());
+        if (optionalTask.isPresent() && optionalUser.isPresent()) {
             Task existingTask = optionalTask.get();
             existingTask.setTitle(taskDTO.getTitle());
             existingTask.setDescription(taskDTO.getDescription());
             existingTask.setDueDate(taskDTO.getDueDate());
             existingTask.setPriority(taskDTO.getPriority());
             existingTask.setTaskStatus(mapStringToTaskStatus(String.valueOf(taskDTO.getTaskStatus())));
+            existingTask.setUsuario(optionalUser.get());
             return taskRespository.save(existingTask).getTaskDTO();
         }
         return null;
+    }
+
+    @Override
+    public List<TaskDTO> searchTaskByTitle(String title) {
+        return taskRespository.findAllByTitleContaining(title)
+                .stream()
+                .sorted(Comparator.comparing(Task::getDueDate).reversed())
+                .map(Task::getTaskDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDTO createComment(Long taskId, String content) {
+        Optional<Task> optionalTask = taskRespository.findById(taskId);
+        Usuario usuario=jwtUtil.getLoggedInUser();
+        if ((optionalTask.isPresent()) && usuario != null) {
+            Comment comment = new Comment();
+            comment.setCreateAt(new Date());
+            comment.setContent(content);
+            comment.setTask(optionalTask.get());
+            comment.setUsuario(usuario);
+            return commentRepository.save(comment).getCommentDTO();
+        }
+        throw new EntityNotFoundException("User or Task not found");
+    }
+
+    @Override
+    public List<CommentDTO> getCommentsByTaskId(Long taskId) {
+        Usuario usuario = jwtUtil.getLoggedInUser();
+        if (usuario == null) {
+            throw new EntityNotFoundException("Usuario no autenticado");
+        }
+        Optional<Task> task = taskRespository.findById(taskId);
+        if (task.isEmpty()) {
+            throw new EntityNotFoundException("Tarea no encontrada");
+        }
+        if (usuario.getUserRole() == UserRole.ESTUDIANTE &&
+                task.get().getUsuario().getId() != usuario.getId()) {  // Cambiado a comparación con !=
+            throw new EntityNotFoundException("No tienes permiso para ver estos comentarios");
+        }
+        return commentRepository.findAllByTaskId(taskId)
+                .stream()
+                .map(Comment::getCommentDTO)
+                .collect(Collectors.toList());
     }
 
     private TaskStatus mapStringToTaskStatus(String status) {

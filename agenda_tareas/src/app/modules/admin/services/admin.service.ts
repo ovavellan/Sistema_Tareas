@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {Observable, throwError} from "rxjs";
 import {StorageService} from "../../../auth/services/storage/storage.service";
+import {catchError} from "rxjs/operators";
 
 const BASIC_URL = 'http://localhost:8080/';
 
@@ -30,6 +31,12 @@ export class AdminService {
     })
   }
 
+  searchTask(title: string):Observable<any>{
+    return this.http.get(BASIC_URL + `api/admin/tasks/search/${title}`,{
+      headers: this.createAuthorizationHeader()
+    })
+  }
+
   getAllTasks():Observable<any>{
     return this.http.get(BASIC_URL + "api/admin/tasks", {
       headers: this.createAuthorizationHeader()
@@ -44,6 +51,22 @@ export class AdminService {
 
   getTaskById(id: number):Observable<any>{
     return this.http.get(BASIC_URL + "api/admin/task/" + id, {
+      headers: this.createAuthorizationHeader()
+    })
+  }
+
+  createComment(id: number, content: string):Observable<any>{
+    const params = {
+      content: content
+    }
+    return this.http.post(BASIC_URL + "api/admin/task/comment/" + id, null,{
+      params: params,
+      headers: this.createAuthorizationHeader()
+    })
+  }
+
+  getCommentsByTask(id: number):Observable<any>{
+    return this.http.get(BASIC_URL + "api/admin/comments/" + id, {
       headers: this.createAuthorizationHeader()
     })
   }

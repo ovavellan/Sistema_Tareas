@@ -1,1 +1,41 @@
-<p>dashboard works!</p>
+<div class="task-list">
+  <mat-card class="task-card" *ngFor="let task of listOfTasks">
+    <div class="task-details">
+      <h2 class="task-name">{{ task.title }}</h2>
+      <p class="task-description">{{ task.description }}</p>
+      <mat-divider></mat-divider>
+      <div class="task-info">
+        <div class="info-row">
+          <span class="info-label">Due Date:</span>
+          <span class="info-value">{{ task.dueDate | date: 'MMM d, y' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Estudiante:</span>
+          <span class="info-value">{{ task.studentName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Prioridad:</span>
+          <span class="info-value">{{ task.priority }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="info-label">Estatus:</span>
+          <span class="info-value">{{ task.taskStatus }}</span>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="actions">
+        <button mat-icon-button color="accent" class="view-button" routerLink="/student/task-details/{{task.id}}">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="primary" class="update-button" [matMenuTriggerFor]="statusMenu">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <mat-menu #statusMenu="matMenu">
+          <button mat-menu-item (click)="updateStatus(task.id, 'ENPROGRESO')">ENPROGRESO</button>
+          <button mat-menu-item (click)="updateStatus(task.id, 'COMPLETADA')">COMPLETADA</button>
+        </mat-menu>
+      </div>
+    </div>
+  </mat-card>
+</div>

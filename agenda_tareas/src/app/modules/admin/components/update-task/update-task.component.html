@@ -36,6 +36,17 @@
         Required!</mat-error>
     </mat-form-field>
 
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Seleccione el estado de la tarea</mat-label>
+      <mat-select formControlName="taskStatus" name="taskStatus">
+        <mat-option *ngFor="let status of listOfTaskStatus" [value]="status">
+          {{status}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="updateTaskForm.get('taskStatus')?.hasError('required')">This Input Is
+        Required!</mat-error>
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="form.field">
       <mat-label>Seleccione el Estudiante</mat-label>
       <mat-select formControlName="studentId" name="studentId">

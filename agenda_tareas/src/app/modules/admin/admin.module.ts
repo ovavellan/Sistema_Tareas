@@ -26,6 +26,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
 import { UpdateTaskComponent } from './components/update-task/update-task.component';
+import { ViewTaskDetailsComponent } from './components/view-task-details/view-task-details.component';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { UpdateTaskComponent } from './components/update-task/update-task.compon
 
     DashboardComponent,
     PostTaskComponent,
-    UpdateTaskComponent
+    UpdateTaskComponent,
+    ViewTaskDetailsComponent,
   ],
   imports: [
     CommonModule,

@@ -14,7 +14,8 @@ export class UpdateTaskComponent {
   id:number = this.route.snapshot.params["id"];
   updateTaskForm!: FormGroup;
   listOfEstudents: any = [];
-  listOfPriorities: any = ["LOW", "MEDIUM", "HIGH"];
+  listOfPriorities: any = ["BAJO", "MEDIO", "ALTO"];
+  listOfTaskStatus: any = ["PENDIENTE", "ENPROGRESO", "COMPLETADA", "APLAZADA", "CANCELADA"];
 
   constructor(private service: AdminService,
               private route: ActivatedRoute,
@@ -30,7 +31,7 @@ export class UpdateTaskComponent {
       description: [null, [Validators.required, Validators.maxLength(500)]],
       dueDate: [null, [Validators.required]],
       priority: [null, [Validators.required]],
-
+      taskStatus: [null, [Validators.required]],
     })
   }
 

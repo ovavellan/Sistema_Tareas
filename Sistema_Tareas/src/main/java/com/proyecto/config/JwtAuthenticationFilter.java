@@ -36,45 +36,50 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
-        // Corregir la condición para verificar el encabezado
+        System.out.println("Auth Header recibido: " + authHeader);
+
         if (StringUtils.isEmpty(authHeader) || !authHeader.startsWith("Bearer ")) {
+            System.out.println("Header inválido o vacío");
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Extraer el token JWT
-        jwt = authHeader.substring(7);
+        try {
+            jwt = authHeader.substring(7);
+            System.out.println("JWT extraído: " + jwt.substring(0, Math.min(jwt.length(), 20)) + "...");
 
-        // Extraer el correo del usuario
-        userEmail = jwtUtil.extractUserName(jwt);
+            userEmail = jwtUtil.extractUserName(jwt);
+            System.out.println("Email extraído del token: " + userEmail);
 
-        // Corregir la condición de autenticación
-        // Primero verifica que el email no esté vacío y que no haya autenticación previa
-        if (StringUtils.isNotEmpty(userEmail)
-                && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // Verificar autenticación actual
+            System.out.println("Auth actual: " + SecurityContextHolder.getContext().getAuthentication());
 
-            // Cargar los detalles del usuario
-            UserDetails userDetails = usuarioServicio.userDetailsService().loadUserByUsername(userEmail);
+            if (StringUtils.isNotEmpty(userEmail)) {
+                UserDetails userDetails = usuarioServicio.userDetailsService()
+                        .loadUserByUsername(userEmail);
+                System.out.println("UserDetails cargado: " + userDetails.getUsername());
 
-            // Validar el token
-            if (jwtUtil.isTokenValid(jwt, userDetails)) {
-                // Crear un nuevo contexto de seguridad
-                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                if (jwtUtil.isTokenValid(jwt, userDetails)) {
+                    System.out.println("Token validado correctamente");
 
-                // Crear token de autenticación
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
 
-                // Establecer detalles de la autenticación
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // Establecer la autenticación en el contexto
-                context.setAuthentication(authToken);
-                SecurityContextHolder.setContext(context);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    System.out.println("Nueva autenticación establecida: " + authToken);
+                } else {
+                    System.out.println("Token inválido");
+                }
             }
+        } catch (Exception e) {
+            System.out.println("Error en la autenticación: " + e.getMessage());
+            e.printStackTrace();
         }
 
-        // Continuar con la cadena de filtros
         filterChain.doFilter(request, response);
     }
 }
