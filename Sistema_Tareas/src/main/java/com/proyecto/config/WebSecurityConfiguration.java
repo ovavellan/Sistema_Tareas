@@ -1,7 +1,7 @@
 package com.proyecto.config;
 
 import com.proyecto.enums.UserRole;
-import com.proyecto.servicio.jwt.UsuarioServicio;
+import com.proyecto.service.jwt.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +27,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class WebSecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UsuarioServicio usuarioServicio;
+    private final UserService userService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,7 +48,7 @@ public class WebSecurityConfiguration {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authprovider = new DaoAuthenticationProvider();
-        authprovider.setUserDetailsService(usuarioServicio.userDetailsService());
+        authprovider.setUserDetailsService(userService.userDetailsService());
         authprovider.setPasswordEncoder(passwordEncoder());
         return authprovider;
     }

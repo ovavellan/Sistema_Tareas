@@ -2,7 +2,7 @@ package com.proyecto.controller.student;
 
 import com.proyecto.dto.CommentDTO;
 import com.proyecto.dto.TaskDTO;
-import com.proyecto.servicio.student.StudentService;
+import com.proyecto.service.student.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

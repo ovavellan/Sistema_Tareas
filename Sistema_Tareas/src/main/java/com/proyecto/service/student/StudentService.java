@@ -1,4 +1,4 @@
-package com.proyecto.servicio.student;
+package com.proyecto.service.student;
 
 import com.proyecto.dto.CommentDTO;
 import com.proyecto.dto.TaskDTO;

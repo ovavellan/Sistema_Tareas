@@ -1,6 +1,6 @@
 package com.proyecto.config;
 
-import com.proyecto.servicio.jwt.UsuarioServicio;
+import com.proyecto.service.jwt.UserService;
 import com.proyecto.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,7 +10,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -24,7 +23,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UsuarioServicio usuarioServicio;
+    private final UserService userService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -55,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             System.out.println("Auth actual: " + SecurityContextHolder.getContext().getAuthentication());
 
             if (StringUtils.isNotEmpty(userEmail)) {
-                UserDetails userDetails = usuarioServicio.userDetailsService()
+                UserDetails userDetails = userService.userDetailsService()
                         .loadUserByUsername(userEmail);
                 System.out.println("UserDetails cargado: " + userDetails.getUsername());
 

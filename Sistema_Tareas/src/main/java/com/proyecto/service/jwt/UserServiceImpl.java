@@ -1,6 +1,6 @@
-package com.proyecto.servicio.jwt;
+package com.proyecto.service.jwt;
 
-import com.proyecto.repositorio.UsuarioRepositorio;
+import com.proyecto.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,16 +9,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UsuarioServicioImpl implements UsuarioServicio{
+public class UserServiceImpl implements UserService {
 
-    private final UsuarioRepositorio usuarioRepositorio;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetailsService userDetailsService() {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                return usuarioRepositorio.findFirstByEmail(username).orElseThrow(()->new UsernameNotFoundException("Usuario no encontrado"));
+                return userRepository.findFirstByEmail(username).orElseThrow(()->new UsernameNotFoundException("Usuario no encontrado"));
             }
         };
     }

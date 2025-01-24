@@ -1,4 +1,4 @@
-package com.proyecto.servicio.admin;
+package com.proyecto.service.admin;
 
 import com.proyecto.dto.CommentDTO;
 import com.proyecto.dto.TaskDTO;
@@ -7,16 +7,15 @@ import com.proyecto.entities.Comment;
 import com.proyecto.entities.Task;
 import com.proyecto.enums.TaskStatus;
 import com.proyecto.enums.UserRole;
-import com.proyecto.entities.Usuario;
-import com.proyecto.repositorio.CommentRepository;
-import com.proyecto.repositorio.TaskRespository;
-import com.proyecto.repositorio.UsuarioRepositorio;
+import com.proyecto.entities.User;
+import com.proyecto.repository.CommentRepository;
+import com.proyecto.repository.TaskRespository;
+import com.proyecto.repository.UserRepository;
 import com.proyecto.utils.JwtUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService{
 
-    private final UsuarioRepositorio usuarioRepositorio;
+    private final UserRepository userRepository;
 
     private final TaskRespository taskRespository;
 
@@ -37,16 +36,16 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public List<UserDto> getUsers() {
-        return usuarioRepositorio.findAll()
+        return userRepository.findAll()
                 .stream()
                 .filter(user -> user.getUserRole() == UserRole.ESTUDIANTE)
-                .map(Usuario::getUserDto)
+                .map(User::getUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public TaskDTO createTask(TaskDTO taskDTO) {
-        Optional<Usuario> optionalUser = usuarioRepositorio.findById(taskDTO.getStudentId());
+        Optional<User> optionalUser = userRepository.findById(taskDTO.getStudentId());
         if (optionalUser.isPresent()) {
             Task task = new Task();
             task.setTitle(taskDTO.getTitle());
@@ -54,7 +53,7 @@ public class AdminServiceImpl implements AdminService{
             task.setPriority(taskDTO.getPriority());
             task.setDueDate(taskDTO.getDueDate());
             task.setTaskStatus(TaskStatus.ENPROGRESO);
-            task.setUsuario(optionalUser.get());
+            task.setUser(optionalUser.get());
             return taskRespository.save(task).getTaskDTO();
         }
         return null;
@@ -83,7 +82,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public TaskDTO updateTask(Long id, TaskDTO taskDTO) {
         Optional<Task> optionalTask = taskRespository.findById(id);
-        Optional<Usuario> optionalUser = usuarioRepositorio.findById(taskDTO.getStudentId());
+        Optional<User> optionalUser = userRepository.findById(taskDTO.getStudentId());
         if (optionalTask.isPresent() && optionalUser.isPresent()) {
             Task existingTask = optionalTask.get();
             existingTask.setTitle(taskDTO.getTitle());
@@ -91,7 +90,7 @@ public class AdminServiceImpl implements AdminService{
             existingTask.setDueDate(taskDTO.getDueDate());
             existingTask.setPriority(taskDTO.getPriority());
             existingTask.setTaskStatus(mapStringToTaskStatus(String.valueOf(taskDTO.getTaskStatus())));
-            existingTask.setUsuario(optionalUser.get());
+            existingTask.setUser(optionalUser.get());
             return taskRespository.save(existingTask).getTaskDTO();
         }
         return null;
@@ -109,13 +108,13 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public CommentDTO createComment(Long taskId, String content) {
         Optional<Task> optionalTask = taskRespository.findById(taskId);
-        Usuario usuario=jwtUtil.getLoggedInUser();
-        if ((optionalTask.isPresent()) && usuario != null) {
+        User user =jwtUtil.getLoggedInUser();
+        if ((optionalTask.isPresent()) && user != null) {
             Comment comment = new Comment();
             comment.setCreateAt(new Date());
             comment.setContent(content);
             comment.setTask(optionalTask.get());
-            comment.setUsuario(usuario);
+            comment.setUser(user);
             return commentRepository.save(comment).getCommentDTO();
         }
         throw new EntityNotFoundException("User or Task not found");
@@ -123,16 +122,16 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public List<CommentDTO> getCommentsByTaskId(Long taskId) {
-        Usuario usuario = jwtUtil.getLoggedInUser();
-        if (usuario == null) {
+        User user = jwtUtil.getLoggedInUser();
+        if (user == null) {
             throw new EntityNotFoundException("Usuario no autenticado");
         }
         Optional<Task> task = taskRespository.findById(taskId);
         if (task.isEmpty()) {
             throw new EntityNotFoundException("Tarea no encontrada");
         }
-        if (usuario.getUserRole() == UserRole.ESTUDIANTE &&
-                task.get().getUsuario().getId() != usuario.getId()) {  // Cambiado a comparación con !=
+        if (user.getUserRole() == UserRole.ESTUDIANTE &&
+                task.get().getUser().getId() != user.getId()) {  // Cambiado a comparación con !=
             throw new EntityNotFoundException("No tienes permiso para ver estos comentarios");
         }
         return commentRepository.findAllByTaskId(taskId)

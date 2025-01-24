@@ -27,15 +27,15 @@ public class Task {
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Usuario usuario;
+    private User user;
 
     public TaskDTO getTaskDTO(){
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setId(id);
         taskDTO.setTitle(title);
         taskDTO.setDescription(description);
-        taskDTO.setStudentName(usuario.getName());
-        taskDTO.setStudentId(usuario.getId());
+        taskDTO.setStudentName(user.getName());
+        taskDTO.setStudentId(user.getId());
         taskDTO.setTaskStatus(taskStatus);
         taskDTO.setDueDate(dueDate);
         taskDTO.setPriority(priority);

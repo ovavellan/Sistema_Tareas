@@ -23,7 +23,7 @@ public class Comment {
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Usuario usuario;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "task_id", nullable = false)
@@ -37,7 +37,7 @@ public class Comment {
         commentDTO.setContent(content);
         commentDTO.setCreatedAt(createAt);
         commentDTO.setTaskId(task.getId());
-        commentDTO.setPostedBy(usuario.getName());
+        commentDTO.setPostedBy(user.getName());
         return commentDTO;
     }
 }

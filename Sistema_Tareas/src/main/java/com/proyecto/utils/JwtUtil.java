@@ -1,7 +1,7 @@
 package com.proyecto.utils;
 
-import com.proyecto.entities.Usuario;
-import com.proyecto.repositorio.UsuarioRepositorio;
+import com.proyecto.entities.User;
+import com.proyecto.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,7 +21,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class JwtUtil {
 
-    private final UsuarioRepositorio usuarioRepositorio;
+    private final UserRepository userRepository;
 
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
@@ -66,7 +66,7 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public Usuario getLoggedInUser() {
+    public User getLoggedInUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("Authentication: " + authentication); // Debug
 
@@ -78,9 +78,9 @@ public class JwtUtil {
                 String email = userDetails.getUsername();
                 System.out.println("Email extraído: " + email); // Debug
 
-                Usuario usuario = usuarioRepositorio.findFirstByEmail(email).orElse(null);
-                System.out.println("Usuario encontrado: " + usuario); // Debug
-                return usuario;
+                User user = userRepository.findFirstByEmail(email).orElse(null);
+                System.out.println("Usuario encontrado: " + user); // Debug
+                return user;
             }
         }
         return null;

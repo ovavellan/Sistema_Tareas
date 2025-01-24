@@ -1,14 +1,14 @@
-package com.proyecto.servicio.student;
+package com.proyecto.service.student;
 
 import com.proyecto.dto.CommentDTO;
 import com.proyecto.dto.TaskDTO;
 import com.proyecto.entities.Comment;
 import com.proyecto.entities.Task;
-import com.proyecto.entities.Usuario;
+import com.proyecto.entities.User;
 import com.proyecto.enums.TaskStatus;
 import com.proyecto.enums.UserRole;
-import com.proyecto.repositorio.CommentRepository;
-import com.proyecto.repositorio.TaskRespository;
+import com.proyecto.repository.CommentRepository;
+import com.proyecto.repository.TaskRespository;
 import com.proyecto.utils.JwtUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +32,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<TaskDTO> getTasksByUserId() {
-        Usuario user = jwtUtil.getLoggedInUser();
+        User user = jwtUtil.getLoggedInUser();
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
         }
 
-        return taskRespository.findAllByUsuario_Id(user.getId())
+        return taskRespository.findAllByUser_Id(user.getId())
                 .stream()
                 .sorted(Comparator.comparing(Task::getDueDate).reversed())
                 .map(Task::getTaskDTO)
@@ -74,13 +74,13 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public CommentDTO createComment(Long taskId, String content) {
         Optional<Task> optionalTask = taskRespository.findById(taskId);
-        Usuario usuario=jwtUtil.getLoggedInUser();
-        if ((optionalTask.isPresent()) && usuario != null) {
+        User user =jwtUtil.getLoggedInUser();
+        if ((optionalTask.isPresent()) && user != null) {
             Comment comment = new Comment();
             comment.setCreateAt(new Date());
             comment.setContent(content);
             comment.setTask(optionalTask.get());
-            comment.setUsuario(usuario);
+            comment.setUser(user);
             return commentRepository.save(comment).getCommentDTO();
         }
         throw new EntityNotFoundException("User or Task not found");
@@ -88,16 +88,16 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<CommentDTO> getCommentsByTaskId(Long taskId) {
-        Usuario usuario = jwtUtil.getLoggedInUser();
-        if (usuario == null) {
+        User user = jwtUtil.getLoggedInUser();
+        if (user == null) {
             throw new EntityNotFoundException("Usuario no autenticado");
         }
         Optional<Task> task = taskRespository.findById(taskId);
         if (task.isEmpty()) {
             throw new EntityNotFoundException("Tarea no encontrada");
         }
-        if (usuario.getUserRole() == UserRole.ESTUDIANTE &&
-                task.get().getUsuario().getId() != usuario.getId()) {  // Cambiado a comparación con !=
+        if (user.getUserRole() == UserRole.ESTUDIANTE &&
+                task.get().getUser().getId() != user.getId()) {  // Cambiado a comparación con !=
             throw new EntityNotFoundException("No tienes permiso para ver estos comentarios");
         }
         return commentRepository.findAllByTaskId(taskId)

@@ -1,9 +1,8 @@
-package com.proyecto.servicio.admin;
+package com.proyecto.service.admin;
 
 import com.proyecto.dto.CommentDTO;
 import com.proyecto.dto.TaskDTO;
 import com.proyecto.dto.UserDto;
-import com.proyecto.entities.Task;
 
 import java.util.List;
 

@@ -1,6 +1,5 @@
-package com.proyecto.repositorio;
+package com.proyecto.repository;
 
-import com.proyecto.dto.CommentDTO;
 import com.proyecto.entities.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

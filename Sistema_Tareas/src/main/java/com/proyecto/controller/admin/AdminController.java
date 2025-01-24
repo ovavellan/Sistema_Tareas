@@ -2,7 +2,7 @@ package com.proyecto.controller.admin;
 
 import com.proyecto.dto.CommentDTO;
 import com.proyecto.dto.TaskDTO;
-import com.proyecto.servicio.admin.AdminService;
+import com.proyecto.service.admin.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

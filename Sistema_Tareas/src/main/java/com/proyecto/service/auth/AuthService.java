@@ -1,4 +1,4 @@
-package com.proyecto.servicio.auth;
+package com.proyecto.service.auth;
 
 import com.proyecto.dto.SignupRequest;
 import com.proyecto.dto.UserDto;

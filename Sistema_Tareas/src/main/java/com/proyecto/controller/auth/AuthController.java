@@ -4,10 +4,10 @@ import com.proyecto.dto.AuthenticationRequest;
 import com.proyecto.dto.AuthenticationResponse;
 import com.proyecto.dto.SignupRequest;
 import com.proyecto.dto.UserDto;
-import com.proyecto.entities.Usuario;
-import com.proyecto.repositorio.UsuarioRepositorio;
-import com.proyecto.servicio.auth.AuthService;
-import com.proyecto.servicio.jwt.UsuarioServicio;
+import com.proyecto.entities.User;
+import com.proyecto.repository.UserRepository;
+import com.proyecto.service.auth.AuthService;
+import com.proyecto.service.jwt.UserService;
 import com.proyecto.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,11 +27,11 @@ public class AuthController {
 
     private final AuthService authService;
 
-    private final UsuarioRepositorio usuarioRepositorio;
+    private final UserRepository userRepository;
 
     private final JwtUtil jwtUtil;
 
-    private final UsuarioServicio usuarioServicio;
+    private final UserService userService;
 
     private final AuthenticationManager authenticationManager;
 
@@ -54,9 +54,9 @@ public class AuthController {
                             authenticationRequest.getPassword()
                     )
             );
-            final UserDetails userDetails = usuarioServicio.userDetailsService()
+            final UserDetails userDetails = userService.userDetailsService()
                     .loadUserByUsername(authenticationRequest.getEmail());
-            Optional<Usuario> optionalUser = usuarioRepositorio.findFirstByEmail(authenticationRequest.getEmail());
+            Optional<User> optionalUser = userRepository.findFirstByEmail(authenticationRequest.getEmail());
 
             final String jwtToken = jwtUtil.generateToken(userDetails);
             AuthenticationResponse authenticationResponse = new AuthenticationResponse();
