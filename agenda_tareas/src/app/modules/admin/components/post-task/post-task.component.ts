@@ -12,7 +12,7 @@ import { Router } from "@angular/router";
 export class PostTaskComponent implements OnInit {
   taskForm!: FormGroup;
   listOfEstudents: any[] = [];
-  listOfPriorities: string[] = ["LOW", "MEDIUM", "HIGH"];
+  listOfPriorities: string[] = ["BAJA", "MEDIA", "ALTA"];
 
   constructor(
     private adminService: AdminService,

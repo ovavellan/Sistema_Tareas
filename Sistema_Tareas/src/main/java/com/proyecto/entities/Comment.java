@@ -37,7 +37,7 @@ public class Comment {
         commentDTO.setContent(content);
         commentDTO.setCreatedAt(createAt);
         commentDTO.setTaskId(task.getId());
-        commentDTO.setPostedBy(user.getName());
+        commentDTO.setUserName(user.getName());
         return commentDTO;
     }
 }

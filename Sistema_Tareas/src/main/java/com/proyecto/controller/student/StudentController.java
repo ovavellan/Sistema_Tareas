@@ -17,12 +17,14 @@ public class StudentController {
 
     private final StudentService studentService;
 
+    //Obtener las tareas de un estudiante
     @GetMapping("/tasks")
     public ResponseEntity<List<TaskDTO>> getTasksByUserId(){
         return ResponseEntity.ok(studentService.getTasksByUserId());
     }
 
-    @GetMapping("/task/{id}/{status}")
+    //Actualizar status de tarea
+    @PutMapping("/task/{id}/{status}")
     public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id, @PathVariable String status){
         TaskDTO updateTaskDto = studentService.updateTask(id, status);
         if (updateTaskDto == null)
@@ -30,11 +32,13 @@ public class StudentController {
         return ResponseEntity.ok(updateTaskDto);
     }
 
+    //Obtener tarea por ID
     @GetMapping("/task/{id}")
     public ResponseEntity<TaskDTO> getTask(@PathVariable Long id) {
         return ResponseEntity.ok(studentService.getTaskById(id));
     }
 
+    //Crear comentario para una tarea mediante el ID de la misma
     @PostMapping("/task/comment/{taskId}")
     public ResponseEntity<CommentDTO> createComment(@PathVariable Long taskId, @RequestParam String content) {
         CommentDTO createdCommentDTO = studentService.createComment(taskId, content);
@@ -42,6 +46,7 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCommentDTO);
     }
 
+    //Obtener los comentarios de una tarea mediante el ID de la misma
     @GetMapping("/comments/{taskId}")
     public ResponseEntity<List<CommentDTO>> getCommentsByTaskId(@PathVariable Long taskId) {
         return ResponseEntity.ok(studentService.getCommentsByTaskId(taskId));

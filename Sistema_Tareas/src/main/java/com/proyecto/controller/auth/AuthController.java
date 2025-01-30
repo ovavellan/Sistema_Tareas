@@ -35,6 +35,7 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
 
+    //Creación de usuario ADMIN por defecto y creación manual de usuarios con rol ESTUDIANTE
     @PostMapping("/signup")
     public ResponseEntity<?> signupUser(@RequestBody SignupRequest signupRequest) {
         if(authService.hasUserWithEmail(signupRequest.getEmail()))
@@ -45,6 +46,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDto);
     }
 
+    //Ingreso a la aplicación y genaración de token de autenticación
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest authenticationRequest) {
         try {

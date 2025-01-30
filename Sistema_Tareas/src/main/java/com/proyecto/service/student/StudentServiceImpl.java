@@ -46,9 +46,20 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public TaskDTO updateTask(Long id, String status) {
+        User user = jwtUtil.getLoggedInUser();
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+        }
+
         Optional<Task> optionalTask = taskRespository.findById(id);
-        if (optionalTask.isPresent()){
+        if (optionalTask.isPresent()) {
             Task existingTask = optionalTask.get();
+
+            // Verificar que el usuario que intenta actualizar la tarea es el dueño de la tarea
+            if (existingTask.getUser().getId() != user.getId()) { // Comparación de tipos primitivos long
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para actualizar esta tarea");
+            }
+
             existingTask.setTaskStatus(mapStringToTaskStatus(status));
             return taskRespository.save(existingTask).getTaskDTO();
         }
@@ -67,43 +78,71 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public TaskDTO getTaskById(Long id) {
+        User user = jwtUtil.getLoggedInUser();
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+        }
+
         Optional<Task> optionalTask = taskRespository.findById(id);
-        return optionalTask.map(Task::getTaskDTO).orElse(null);
+        if (optionalTask.isPresent()) {
+            Task task = optionalTask.get();
+
+            // Verificar que el usuario que intenta ver la tarea es el dueño de la tarea
+            if (task.getUser().getId() != user.getId()) { // Comparación de tipos primitivos long
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver esta tarea");
+            }
+
+            return task.getTaskDTO();
+        }
+        throw new EntityNotFoundException("Task not found");
     }
 
     @Override
     public CommentDTO createComment(Long taskId, String content) {
+        User user = jwtUtil.getLoggedInUser();
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+        }
+
         Optional<Task> optionalTask = taskRespository.findById(taskId);
-        User user =jwtUtil.getLoggedInUser();
-        if ((optionalTask.isPresent()) && user != null) {
+        if (optionalTask.isPresent()) {
+            Task task = optionalTask.get();
+
+            // Verificar que el usuario que intenta crear un comentario es el dueño de la tarea
+            if (task.getUser().getId() != user.getId()) { // Comparación de tipos primitivos long
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para comentar en esta tarea");
+            }
+
             Comment comment = new Comment();
             comment.setCreateAt(new Date());
             comment.setContent(content);
-            comment.setTask(optionalTask.get());
+            comment.setTask(task);
             comment.setUser(user);
             return commentRepository.save(comment).getCommentDTO();
         }
-        throw new EntityNotFoundException("User or Task not found");
+        throw new EntityNotFoundException("Task not found");
     }
 
     @Override
     public List<CommentDTO> getCommentsByTaskId(Long taskId) {
         User user = jwtUtil.getLoggedInUser();
         if (user == null) {
-            throw new EntityNotFoundException("Usuario no autenticado");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
         }
+
         Optional<Task> task = taskRespository.findById(taskId);
         if (task.isEmpty()) {
             throw new EntityNotFoundException("Tarea no encontrada");
         }
-        if (user.getUserRole() == UserRole.ESTUDIANTE &&
-                task.get().getUser().getId() != user.getId()) {  // Cambiado a comparación con !=
-            throw new EntityNotFoundException("No tienes permiso para ver estos comentarios");
+
+        // Verificar que el usuario que intenta ver los comentarios es el dueño de la tarea
+        if (task.get().getUser().getId() != user.getId()) { // Comparación de tipos primitivos long
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para ver estos comentarios");
         }
+
         return commentRepository.findAllByTaskId(taskId)
                 .stream()
                 .map(Comment::getCommentDTO)
                 .collect(Collectors.toList());
     }
-
 }

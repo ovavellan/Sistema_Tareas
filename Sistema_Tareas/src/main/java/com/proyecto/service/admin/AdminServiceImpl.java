@@ -36,12 +36,19 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public List<UserDto> getUsers() {
-        return userRepository.findAll()
-                .stream()
-                .filter(user -> user.getUserRole() == UserRole.ESTUDIANTE)
-                .map(User::getUserDto)
-                .collect(Collectors.toList());
+        User loggedInUser = jwtUtil.getLoggedInUser();
+
+        if (loggedInUser != null) {
+            return userRepository.findAll()
+                    .stream()
+                    .filter(user -> user.getUserRole() == UserRole.ESTUDIANTE)
+                    .map(User::getUserDto)
+                    .collect(Collectors.toList());
+        }
+
+        throw new EntityNotFoundException("User not authenticated");
     }
+
 
     @Override
     public TaskDTO createTask(TaskDTO taskDTO) {
@@ -61,12 +68,19 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public List<TaskDTO> getAllTasks() {
-        return taskRespository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Task::getDueDate).reversed())
-                .map(Task::getTaskDTO)
-                .collect(Collectors.toList());
+        User user = jwtUtil.getLoggedInUser();
+
+        if (user != null) {
+            return taskRespository.findAll()
+                    .stream()
+                    .sorted(Comparator.comparing(Task::getDueDate).reversed())
+                    .map(Task::getTaskDTO)
+                    .collect(Collectors.toList());
+        }
+
+        throw new EntityNotFoundException("User not authenticated");
     }
+
 
     @Override
     public void deleteTask(Long id) {
